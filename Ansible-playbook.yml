@@ -1,0 +1,53 @@
+name: installing apache
+  hosts: linux-client
+  become: true
+
+
+  tasks:
+    - name: Update all packages # yum update -y
+      yum:
+        name: "*"
+        state: present
+
+    - name: Install apache httpd # yum install httpd -y
+      yum:
+        name: apache2
+        state: present
+
+    - name: Start service httpd, if not started # systemctl start httpd
+      ansible.builtin.service:
+        name: httpd
+        state: started
+
+    - name: Enable service httpd, and not touch the state # systemctl enable httpd
+      ansible.builtin.service:
+        name: httpd
+        enabled: yes
+
+    - name: Copy file with owner and permissions # copy index.html from controle to the client
+      ansible.builtin.copy:
+        src: index.html
+        dest: /var/www/html/
+        
+    - name: Displaying custom message
+      ansible.builtin.debug:
+        msg: "Ansible is a powerfull tool, plaese used it"
+    - name: Pinging Amazon-Hosts
+      ansible.builtin.ping:
+
+
+- name: Install GIT on all Ubuntu Hosts
+  hosts: Ubuntu-Hosts
+  become: yes
+  
+  tasks:
+    - name: Update all packages # yum update -y
+      yum:
+        name: "*"
+        state: present
+    - name: Install git
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+    
